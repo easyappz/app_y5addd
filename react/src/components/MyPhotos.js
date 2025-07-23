@@ -47,9 +47,9 @@ const MyPhotos = () => {
         await removePhotoFromEvaluated(photoId);
         setPhotos(photos.map(p => p.id === photoId ? { ...p, isEvaluated: false } : p));
       } else {
-        await addPhotoToEvaluated(photoId);
+        const response = await addPhotoToEvaluated(photoId);
         setPhotos(photos.map(p => p.id === photoId ? { ...p, isEvaluated: true } : p));
-        setPoints(points - 1);
+        setPoints(response.points || points - 1);
       }
     } catch (err) {
       setError(err.message || 'Ошибка при изменении статуса фото');
@@ -70,6 +70,11 @@ const MyPhotos = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const getFullImageUrl = (filePath) => {
+    // Проверяем, начинается ли путь с '/uploads/'. Если да, добавляем базовый URL сервера
+    return filePath.startsWith('/uploads/') ? `${window.location.origin}${filePath}` : filePath;
   };
 
   return (
@@ -95,7 +100,7 @@ const MyPhotos = () => {
               key={photo.id}
               hoverable
               style={{ width: 240, borderRadius: 8, boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)' }}
-              cover={<img alt="Мое фото" src={photo.filePath} style={{ height: 200, objectFit: 'cover', borderRadius: '8px 8px 0 0' }} />}
+              cover={<img alt="Мое фото" src={getFullImageUrl(photo.filePath)} style={{ height: 200, objectFit: 'cover', borderRadius: '8px 8px 0 0' }} onError={(e) => console.error('Image load error:', e)} />}
               actions={[
                 <Button
                   key="evaluate"

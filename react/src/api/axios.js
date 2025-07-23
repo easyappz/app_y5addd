@@ -38,14 +38,20 @@ instance.interceptors.response.use(
   },
   (error) => {
     // Log error to console
-    console.error('API Error:', {
-      error: error,
-    });
+    console.error('API Error:', error);
 
     /** Не удаляй этот код никогда */
     const errorData = {
       type: 'fetchError',
-      error: JSON.stringify(error),
+      url: error.config?.url,
+      request: {
+        data: error.config.data,
+      },
+      response: {
+        status: error.response?.status,
+        message: error.message,
+        data: error.response?.data,
+      },
     };
 
     /** Не удаляй этот код никогда */

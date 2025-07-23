@@ -138,6 +138,11 @@ exports.addToEvaluated = async (req, res) => {
   try {
     const { photoId } = req.body;
 
+    // Validate if photoId is provided
+    if (!photoId) {
+      return res.status(400).json({ error: 'Photo ID is required' });
+    }
+
     // Validate if photoId is a valid ObjectId
     if (!mongoose.Types.ObjectId.isValid(photoId)) {
       return res.status(400).json({ error: 'Invalid photo ID format' });
@@ -166,6 +171,11 @@ exports.addToEvaluated = async (req, res) => {
 exports.removeFromEvaluated = async (req, res) => {
   try {
     const { photoId } = req.body;
+
+    // Validate if photoId is provided
+    if (!photoId) {
+      return res.status(400).json({ error: 'Photo ID is required' });
+    }
 
     // Validate if photoId is a valid ObjectId
     if (!mongoose.Types.ObjectId.isValid(photoId)) {

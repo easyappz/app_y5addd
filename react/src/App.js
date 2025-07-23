@@ -8,6 +8,7 @@ import ResetPassword from './components/Auth/ResetPassword';
 import MyPhotos from './components/MyPhotos';
 import Upload from './components/Upload';
 import RatePhoto from './components/RatePhoto';
+import { checkAuth } from './api/auth';
 import './App.css';
 
 function App() {
@@ -15,16 +16,28 @@ function App() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Check if user is logged in by verifying token in localStorage
-    const token = localStorage.getItem('token');
-    if (token) {
-      setIsAuthenticated(true);
-    }
-    setLoading(false);
+    // Check if user is logged in by validating token via API call
+    const verifyAuth = async () => {
+      try {
+        const isAuth = await checkAuth();
+        setIsAuthenticated(isAuth);
+      } catch (error) {
+        console.error('Error during auth check:', error);
+        setIsAuthenticated(false);
+      } finally {
+        setLoading(false);
+      }
+    };
+    verifyAuth();
   }, []);
 
   if (loading) {
-    return <div>Загрузка...</div>;
+    return (
+      <div className="loading-container">
+        <div className="loading-spinner"></div>
+        <div>Загрузка...</div>
+      </div>
+    );
   }
 
   return (

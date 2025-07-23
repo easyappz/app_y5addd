@@ -69,7 +69,7 @@ export const ratePhoto = async (photoId, score) => {
 /**
  * Add photo to evaluated list
  * @param {string} photoId - Photo ID
- * @returns {Promise<Object>} - Response with success message
+ * @returns {Promise<Object>} - Response with success message and points
  */
 export const addPhotoToEvaluated = async (photoId) => {
   try {

@@ -24,6 +24,10 @@ instance.interceptors.request.use(
       // Remove Authorization header if no token is present to avoid sending empty or invalid headers
       delete config.headers['Authorization'];
     }
+
+    // Добавляем информацию о вызывающем коде в errorData
+    config._caller = config._caller || 'Unknown caller';
+  
     return config;
   },
   (error) => {
@@ -45,8 +49,8 @@ instance.interceptors.response.use(
       type: 'fetchError',
       url: error.config?.url,
       request: {
-        headers: error.config.headers,
-        data: error.config.data,
+        headers: error.config?.headers,
+        data: error.config?.data,
       },
       response: {
         status: error.response?.status,
@@ -54,6 +58,8 @@ instance.interceptors.response.use(
         headers: error.response?.headers,
         message: error.message,
       },
+      path: error.config?.url,
+      caller: error.config?._caller,
     };
 
     /** Не удаляй этот код никогда */

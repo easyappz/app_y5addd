@@ -119,3 +119,20 @@ export const getPhotoStatistics = async (photoId) => {
     };
   }
 };
+
+/**
+ * Get user's uploaded photos
+ * @returns {Promise<Object>} - Response with user's photos and points
+ */
+export const getMyPhotos = async () => {
+  try {
+    const response = await instance.get('/api/photo/my-photos');
+    return response.data;
+  } catch (error) {
+    throw {
+      status: error.response?.status || 500,
+      message: error.response?.data?.error || 'Не удалось загрузить ваши фотографии',
+      details: error.response?.data?.details || 'Неизвестная ошибка сервера',
+    };
+  }
+};

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Card, Button, Typography, Alert, Spin, Modal } from 'antd';
-import { getPhotoStatistics, addPhotoToEvaluated, removePhotoFromEvaluated } from '../api/photo';
+import { getMyPhotos, getPhotoStatistics, addPhotoToEvaluated, removePhotoFromEvaluated } from '../api/photo';
 import { useNavigate } from 'react-router-dom';
 
 const { Title, Text } = Typography;
@@ -15,15 +15,21 @@ const MyPhotos = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Здесь должен быть запрос на получение списка загруженных фотографий пользователя
-    // Пока используем заглушку
-    setTimeout(() => {
-      setPhotos([
-        { id: '1', filePath: '/placeholder-image.jpg', isEvaluated: false },
-        { id: '2', filePath: '/placeholder-image.jpg', isEvaluated: true },
-      ]);
-      setLoading(false);
-    }, 1000);
+    const fetchPhotos = async () => {
+      setLoading(true);
+      setError(null);
+      try {
+        const data = await getMyPhotos();
+        setPhotos(data.photos || []);
+        setPoints(data.points || 10);
+      } catch (err) {
+        setError(err.message || 'Ошибка при загрузке фотографий');
+        setPhotos([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchPhotos();
   }, []);
 
   const handleToggleEvaluate = async (photoId, isEvaluated) => {

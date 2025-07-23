@@ -336,7 +336,7 @@ paths:
                   points:
                     type: number
         '400':
-          description: Invalid photo ID format
+          description: Invalid photo ID format or type
           content:
             application/json:
               schema:
@@ -388,10 +388,35 @@ paths:
       responses:
         '200':
           description: Photo removed from evaluated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        '400':
+          description: Invalid photo ID format or type
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
         '401':
           description: Unauthorized
         '500':
           description: Failed to remove photo
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                  details:
+                    type: string
   /api/photo/statistics/{photoId}:
     get:
       summary: Get photo statistics (requires authentication)

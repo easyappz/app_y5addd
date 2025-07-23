@@ -138,9 +138,9 @@ exports.addToEvaluated = async (req, res) => {
   try {
     const { photoId } = req.body;
 
-    // Validate if photoId is provided
-    if (!photoId) {
-      return res.status(400).json({ error: 'Photo ID is required' });
+    // Validate if photoId is provided and is a string
+    if (!photoId || typeof photoId !== 'string') {
+      return res.status(400).json({ error: 'Photo ID is required and must be a string' });
     }
 
     // Validate if photoId is a valid ObjectId
@@ -173,9 +173,9 @@ exports.removeFromEvaluated = async (req, res) => {
   try {
     const { photoId } = req.body;
 
-    // Validate if photoId is provided
-    if (!photoId) {
-      return res.status(400).json({ error: 'Photo ID is required' });
+    // Validate if photoId is provided and is a string
+    if (!photoId || typeof photoId !== 'string') {
+      return res.status(400).json({ error: 'Photo ID is required and must be a string' });
     }
 
     // Validate if photoId is a valid ObjectId

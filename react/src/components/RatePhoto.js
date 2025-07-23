@@ -62,6 +62,18 @@ const RatePhoto = () => {
       });
       return;
     }
+    if (typeof currentPhoto.id !== 'string' || !currentPhoto.id.trim()) {
+      message.error({
+        content: 'Неверный ID фотографии. Пожалуйста, обновите страницу или попробуйте позже.',
+        style: {
+          marginTop: '20px',
+          fontSize: '16px',
+          textAlign: 'center',
+        },
+        duration: 3,
+      });
+      return;
+    }
     setLoading(true);
     try {
       // Сначала оцениваем фото

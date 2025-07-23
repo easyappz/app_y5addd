@@ -73,6 +73,9 @@ export const ratePhoto = async (photoId, score) => {
  */
 export const addPhotoToEvaluated = async (photoId) => {
   try {
+    if (typeof photoId !== 'string' || !photoId.trim()) {
+      throw new Error('Invalid photoId: must be a non-empty string');
+    }
     // Ensure photoId is a string and not empty
     const id = String(photoId).trim();
     if (!id) {

@@ -160,9 +160,10 @@ exports.addToEvaluated = async (req, res) => {
     // Check if the photoId is already in the evaluatedPhotos array
     if (!user.evaluatedPhotos.some(id => id.equals(photoObjectId))) {
       user.evaluatedPhotos.push(photoObjectId);
+      user.points = user.points + 1; // Increment points when evaluating a photo
       await user.save();
     }
-    res.json({ message: 'Photo added to evaluated' });
+    res.json({ message: 'Photo added to evaluated', points: user.points });
   } catch (error) {
     res.status(500).json({ error: 'Failed to add photo to evaluated', details: error.message });
   }
@@ -236,7 +237,7 @@ exports.getMyPhotos = async (req, res) => {
 
     res.json({
       photos: photosWithStatus,
-      points: totalPoints
+      points: user.points // Return user points instead of calculated totalPoints
     });
   } catch (error) {
     res.status(500).json({ error: 'Failed to fetch user\'s photos', details: error.message });

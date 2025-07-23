@@ -333,6 +333,8 @@ paths:
                 properties:
                   message:
                     type: string
+                  points:
+                    type: number
         '400':
           description: Invalid photo ID format
           content:

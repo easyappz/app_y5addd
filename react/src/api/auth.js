@@ -1,37 +1,48 @@
 import { instance } from './axios';
 
-export const register = async (email, password) => {
-  try {
-    const response = await instance.post('/api/register', { email, password });
-    return response.data;
-  } catch (error) {
-    throw error.response?.data || error.message;
-  }
+/**
+ * Register a new user
+ * @param {Object} data - User registration data
+ * @param {string} data.email - User email
+ * @param {string} data.password - User password
+ * @returns {Promise<Object>} - Response with token
+ */
+export const register = async (data) => {
+  const response = await instance.post('/api/register', data);
+  return response.data;
 };
 
-export const login = async (email, password) => {
-  try {
-    const response = await instance.post('/api/login', { email, password });
-    return response.data;
-  } catch (error) {
-    throw error.response?.data || error.message;
-  }
+/**
+ * Login a user
+ * @param {Object} data - User login data
+ * @param {string} data.email - User email
+ * @param {string} data.password - User password
+ * @returns {Promise<Object>} - Response with token
+ */
+export const login = async (data) => {
+  const response = await instance.post('/api/login', data);
+  return response.data;
 };
 
-export const forgotPassword = async (email) => {
-  try {
-    const response = await instance.post('/api/forgot-password', { email });
-    return response.data;
-  } catch (error) {
-    throw error.response?.data || error.message;
-  }
+/**
+ * Request password reset
+ * @param {Object} data - User email data
+ * @param {string} data.email - User email
+ * @returns {Promise<Object>} - Response with message and token
+ */
+export const forgotPassword = async (data) => {
+  const response = await instance.post('/api/forgot-password', data);
+  return response.data;
 };
 
-export const resetPassword = async (token, newPassword) => {
-  try {
-    const response = await instance.post('/api/reset-password', { token, newPassword });
-    return response.data;
-  } catch (error) {
-    throw error.response?.data || error.message;
-  }
+/**
+ * Reset user password
+ * @param {Object} data - Reset password data
+ * @param {string} data.token - Reset token
+ * @param {string} data.newPassword - New password
+ * @returns {Promise<Object>} - Response with success message
+ */
+export const resetPassword = async (data) => {
+  const response = await instance.post('/api/reset-password', data);
+  return response.data;
 };

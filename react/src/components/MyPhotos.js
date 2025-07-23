@@ -79,6 +79,7 @@ const MyPhotos = () => {
         Ваши баллы: {points}
       </Text>
       <Button
+        type="primary"
         onClick={() => navigate('/upload')}
         style={{ display: 'block', margin: '0 auto 20px' }}
       >
@@ -88,30 +89,44 @@ const MyPhotos = () => {
       {loading ? (
         <Spin size="large" style={{ display: 'block', margin: 'auto' }} />
       ) : photos.length > 0 ? (
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 16 }}>
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 16, justifyContent: 'center' }}>
           {photos.map((photo) => (
             <Card
               key={photo.id}
-              cover={<img alt="Мое фото" src={photo.filePath} style={{ height: 200, objectFit: 'contain' }} />}
+              hoverable
+              style={{ width: 240, borderRadius: 8, boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)' }}
+              cover={<img alt="Мое фото" src={photo.filePath} style={{ height: 200, objectFit: 'cover', borderRadius: '8px 8px 0 0' }} />}
               actions={[
                 <Button
                   key="evaluate"
+                  type={photo.isEvaluated ? 'default' : 'primary'}
                   onClick={() => handleToggleEvaluate(photo.id, photo.isEvaluated)}
                   disabled={loading || (!photo.isEvaluated && points <= 0)}
+                  style={{ width: '90%', margin: '0 auto' }}
                 >
                   {photo.isEvaluated ? 'Убрать из оценки' : 'Добавить для оценки'}
                 </Button>,
-                <Button key="stats" onClick={() => handleViewStats(photo.id)} disabled={loading}>
+                <Button 
+                  key="stats" 
+                  type="default"
+                  onClick={() => handleViewStats(photo.id)} 
+                  disabled={loading}
+                  style={{ width: '90%', margin: '0 auto' }}
+                >
                   Статистика
                 </Button>,
               ]}
             >
-              <Card.Meta title={`Фото ID: ${photo.id}`} description={photo.isEvaluated ? 'В оценке' : 'Не в оценке'} />
+              <Card.Meta 
+                title={`Фото ID: ${photo.id}`} 
+                description={photo.isEvaluated ? 'В оценке' : 'Не в оценке'} 
+                style={{ textAlign: 'center' }}
+              />
             </Card>
           ))}
         </div>
       ) : (
-        <Alert message="У вас нет загруженных фотографий" type="info" />
+        <Alert message="У вас нет загруженных фотографий" type="info" style={{ textAlign: 'center' }} />
       )}
       {stats && selectedPhoto && (
         <Modal
@@ -122,11 +137,20 @@ const MyPhotos = () => {
             setSelectedPhoto(null);
           }}
           footer={null}
+          centered
+          style={{ maxWidth: 500 }}
         >
-          <p>Всего оценок: {stats.totalRatings}</p>
-          <p>Средняя оценка: {stats.averageScore}</p>
-          <p>Оценки: {stats.scores.join(', ')}</p>
-          {/* Здесь можно добавить более детализированную статистику по полу и возрасту, если API это поддерживает */}
+          <div style={{ padding: '10px 0', textAlign: 'center' }}>
+            <Text strong style={{ display: 'block', marginBottom: 10 }}>
+              Всего оценок: {stats.totalRatings}
+            </Text>
+            <Text strong style={{ display: 'block', marginBottom: 10 }}>
+              Средняя оценка: {stats.averageScore}
+            </Text>
+            <Text strong style={{ display: 'block' }}>
+              Оценки: {stats.scores.join(', ')}
+            </Text>
+          </div>
         </Modal>
       )}
     </div>

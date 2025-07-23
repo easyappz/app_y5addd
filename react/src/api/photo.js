@@ -73,7 +73,9 @@ export const ratePhoto = async (photoId, score) => {
  */
 export const addPhotoToEvaluated = async (photoId) => {
   try {
-    const response = await instance.post('/api/photo/evaluate/add', { photoId });
+    // Ensure photoId is a string
+    const id = String(photoId);
+    const response = await instance.post('/api/photo/evaluate/add', { photoId: id });
     return response.data;
   } catch (error) {
     throw {
@@ -91,7 +93,9 @@ export const addPhotoToEvaluated = async (photoId) => {
  */
 export const removePhotoFromEvaluated = async (photoId) => {
   try {
-    const response = await instance.post('/api/photo/evaluate/remove', { photoId });
+    // Ensure photoId is a string
+    const id = String(photoId);
+    const response = await instance.post('/api/photo/evaluate/remove', { photoId: id });
     return response.data;
   } catch (error) {
     throw {
@@ -109,7 +113,8 @@ export const removePhotoFromEvaluated = async (photoId) => {
  */
 export const getPhotoStatistics = async (photoId) => {
   try {
-    const response = await instance.get(`/api/photo/statistics/${photoId}`);
+    const id = String(photoId);
+    const response = await instance.get(`/api/photo/statistics/${id}`);
     return response.data;
   } catch (error) {
     throw {

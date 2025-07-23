@@ -59,8 +59,8 @@ const RatePhoto = () => {
   };
 
   return (
-    <Card title="Оценка фотографий" style={{ marginBottom: 24 }}>
-      <div style={{ marginBottom: 16 }}>
+    <Card title="Оценка фотографий" style={{ marginBottom: 24, maxWidth: 600, marginLeft: 'auto', marginRight: 'auto' }}>
+      <div style={{ marginBottom: 16, display: 'flex', justifyContent: 'center' }}>
         <Select 
           defaultValue="all" 
           style={{ width: 120, marginRight: 16 }} 
@@ -83,23 +83,27 @@ const RatePhoto = () => {
         </Select>
       </div>
       {loading ? (
-        <Spin size="large" />
+        <div style={{ textAlign: 'center', padding: 20 }}>
+          <Spin size="large" />
+        </div>
       ) : currentPhoto ? (
         <div style={{ textAlign: 'center' }}>
           <img 
             src={currentPhoto.filePath} 
-            alt="Photo to rate" 
-            style={{ maxWidth: '100%', maxHeight: 400, marginBottom: 16 }} 
+            alt="Фото для оценки" 
+            style={{ maxWidth: '100%', maxHeight: 400, marginBottom: 16, borderRadius: 8, boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)' }} 
           />
           <div style={{ marginBottom: 16 }}>
-            <Rate value={rating} onChange={setRating} />
+            <Rate value={rating} onChange={setRating} style={{ fontSize: 24 }} />
           </div>
-          <Button type="primary" onClick={handleRate} disabled={loading || rating === 0}>
+          <Button type="primary" onClick={handleRate} disabled={loading || rating === 0} style={{ padding: '8px 16px', fontSize: 16 }}>
             Оценить
           </Button>
         </div>
       ) : (
-        <p>Фотографии для оценки отсутствуют. Попробуйте изменить фильтры.</p>
+        <p style={{ textAlign: 'center', color: '#888', fontSize: 16 }}>
+          Фотографии для оценки отсутствуют. Попробуйте изменить фильтры.
+        </p>
       )}
     </Card>
   );

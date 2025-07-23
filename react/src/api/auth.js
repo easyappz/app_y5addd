@@ -61,3 +61,19 @@ export const forgotPassword = async (email) => {
     throw error.response?.data || error;
   }
 };
+
+/**
+ * Reset user password with a token and new password
+ * @param {string} token - The reset token received via email
+ * @param {string} newPassword - The new password to set
+ * @returns {Promise<Object>} - Response from the server
+ */
+export const resetPassword = async (token, newPassword) => {
+  try {
+    const response = await instance.post('/api/reset-password', { token, newPassword });
+    return response.data;
+  } catch (error) {
+    console.error('Password reset failed:', error);
+    throw error.response?.data || error;
+  }
+};

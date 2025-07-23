@@ -1,0 +1,282 @@
+openapi: 3.0.0
+info:
+  title: Photo Rating API
+  version: 1.0.0
+paths:
+  /api/register:
+    post:
+      summary: Register a new user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                password:
+                  type: string
+                name:
+                  type: string
+                gender:
+                  type: string
+                  enum: [male, female, other]
+                age:
+                  type: number
+      responses:
+        '201':
+          description: User registered successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                  user:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                      email:
+                        type: string
+                      name:
+                        type: string
+                      gender:
+                        type: string
+                      age:
+                        type: number
+                      points:
+                        type: number
+        '400':
+          description: Email already registered
+  /api/login:
+    post:
+      summary: Login user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                password:
+                  type: string
+      responses:
+        '200':
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                  user:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                      email:
+                        type: string
+                      name:
+                        type: string
+                      gender:
+                        type: string
+                      age:
+                        type: number
+                      points:
+                        type: number
+        '400':
+          description: Invalid credentials
+  /api/forgot-password:
+    post:
+      summary: Request password reset
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+      responses:
+        '200':
+          description: Password reset token generated
+        '404':
+          description: User not found
+  /api/reset-password:
+    post:
+      summary: Reset password
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                token:
+                  type: string
+                newPassword:
+                  type: string
+      responses:
+        '200':
+          description: Password reset successful
+        '400':
+          description: Invalid or expired token
+  /api/photo/upload:
+    post:
+      summary: Upload a photo
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                photo:
+                  type: string
+                  format: binary
+                gender:
+                  type: string
+                  enum: [male, female, other]
+                age:
+                  type: number
+      responses:
+        '201':
+          description: Photo uploaded successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  photo:
+                    type: object
+                  points:
+                    type: number
+        '403':
+          description: Not enough points to upload photo
+  /api/photo/rate:
+    get:
+      summary: Get photos to rate
+      parameters:
+        - in: query
+          name: gender
+          schema:
+            type: string
+            enum: [male, female, other]
+        - in: query
+          name: ageMin
+          schema:
+            type: number
+        - in: query
+          name: ageMax
+          schema:
+            type: number
+      responses:
+        '200':
+          description: List of photos to rate
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+    post:
+      summary: Rate a photo
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                photoId:
+                  type: string
+                score:
+                  type: number
+      responses:
+        '200':
+          description: Photo rated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  raterPoints:
+                    type: number
+                  ownerPoints:
+                    type: number
+        '403':
+          description: Cannot rate own photo
+        '404':
+          description: Photo not found
+  /api/photo/evaluate/add:
+    post:
+      summary: Add photo to evaluated list
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                photoId:
+                  type: string
+      responses:
+        '200':
+          description: Photo added to evaluated list
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  points:
+                    type: number
+        '403':
+          description: Not enough points
+        '404':
+          description: Photo not found
+  /api/photo/evaluate/remove:
+    post:
+      summary: Remove photo from evaluated list
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                photoId:
+                  type: string
+      responses:
+        '200':
+          description: Photo removed from evaluated list
+        '404':
+          description: Photo not found
+  /api/photo/statistics/{photoId}:
+    get:
+      summary: Get photo statistics
+      parameters:
+        - in: path
+          name: photoId
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Photo statistics
+          content:
+            application/json:
+              schema:
+                type: object
+        '404':
+          description: Photo not found

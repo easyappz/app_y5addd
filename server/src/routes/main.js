@@ -1,34 +1,24 @@
 const express = require('express');
-const mongoose = require('mongoose');
-
-/**
- * Пример создания модели в базу данных
- */
-// const MongoTestSchema = new mongoose.Schema({
-//   value: { type: String, required: true },
-// });
-
-// const MongoModelTest = mongoose.model('Test', MongoTestSchema);
-
-// const newTest = new MongoModelTest({
-//   value: 'test-value',
-// });
-
-// newTest.save();
+const authController = require('@src/controllers/authController');
+const photoController = require('@src/controllers/photoController');
+const authMiddleware = require('@src/middleware/auth');
+const multer = require('multer');
+const upload = multer({ dest: 'uploads/' });
 
 const router = express.Router();
 
-// GET /api/hello
-router.get('/hello', (req, res) => {
-  res.json({ message: 'Hello from API!' });
-});
+// Auth routes
+router.post('/register', authController.register);
+router.post('/login', authController.login);
+router.post('/forgot-password', authController.forgotPassword);
+router.post('/reset-password', authController.resetPassword);
 
-// GET /api/status
-router.get('/status', (req, res) => {
-  res.json({ 
-    status: 'ok',
-    timestamp: new Date().toISOString()
-  });
-});
+// Photo routes
+router.post('/photo/upload', authMiddleware, upload.single('photo'), photoController.uploadPhoto);
+router.get('/photo/rate', authMiddleware, photoController.getPhotosToRate);
+router.post('/photo/rate', authMiddleware, photoController.ratePhoto);
+router.post('/photo/evaluate/add', authMiddleware, photoController.addToEvaluated);
+router.post('/photo/evaluate/remove', authMiddleware, photoController.removeFromEvaluated);
+router.get('/photo/statistics/:photoId', authMiddleware, photoController.getPhotoStatistics);
 
 module.exports = router;

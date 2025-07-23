@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Card, Button, Select, message, Rate, Spin } from 'antd';
-import { getPhotosToRate, ratePhoto } from '../api/photo';
+import { getPhotosToRate, ratePhoto, addPhotoToEvaluated } from '../api/photo';
 
 const { Option } = Select;
 
@@ -64,7 +64,10 @@ const RatePhoto = () => {
     }
     setLoading(true);
     try {
+      // Сначала оцениваем фото
       await ratePhoto(currentPhoto.id, rating);
+      // Затем добавляем фото в список оцененных
+      await addPhotoToEvaluated(currentPhoto.id);
       message.success({
         content: 'Оценка сохранена',
         style: {

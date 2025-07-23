@@ -11,12 +11,16 @@ exports.uploadPhoto = async (req, res) => {
 
     const allowedTypes = ['image/jpeg', 'image/png'];
     if (!allowedTypes.includes(req.file.mimetype)) {
-      fs.unlinkSync(req.file.path);
+      if (fs.existsSync(req.file.path)) {
+        fs.unlinkSync(req.file.path);
+      }
       return res.status(400).json({ error: 'Only JPEG and PNG files are allowed' });
     }
 
     if (req.file.size > 5 * 1024 * 1024) { // 5MB limit
-      fs.unlinkSync(req.file.path);
+      if (fs.existsSync(req.file.path)) {
+        fs.unlinkSync(req.file.path);
+      }
       return res.status(400).json({ error: 'File size exceeds 5MB limit' });
     }
 
@@ -31,7 +35,9 @@ exports.uploadPhoto = async (req, res) => {
     await photo.save();
     res.status(201).json({ message: 'Photo uploaded successfully', photoId: photo._id });
   } catch (error) {
-    if (req.file) fs.unlinkSync(req.file.path);
+    if (req.file && fs.existsSync(req.file.path)) {
+      fs.unlinkSync(req.file.path);
+    }
     res.status(500).json({ error: 'Photo upload failed', details: error.message });
   }
 };

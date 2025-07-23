@@ -14,3 +14,18 @@ export const checkAuth = async () => {
     return false;
   }
 };
+
+/**
+ * Request a password reset for the given email
+ * @param {string} email - The email address of the user
+ * @returns {Promise<Object>} - Response from the server
+ */
+export const forgotPassword = async (email) => {
+  try {
+    const response = await instance.post('/api/forgot-password', { email });
+    return response.data;
+  } catch (error) {
+    console.error('Forgot password request failed:', error);
+    throw error.response?.data || error;
+  }
+};

@@ -165,6 +165,38 @@ paths:
                     type: string
         '500':
           description: Authentication check failed
+  /api/logout:
+    post:
+      summary: Logout a user
+      parameters:
+        - in: header
+          name: Authorization
+          required: true
+          schema:
+            type: string
+            example: Bearer <token>
+          description: JWT token for authentication
+      responses:
+        '200':
+          description: Logout successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        '500':
+          description: Logout failed
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                  details:
+                    type: string
   /api/photo/upload:
     post:
       summary: Upload a photo (requires authentication)

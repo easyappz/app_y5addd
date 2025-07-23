@@ -99,3 +99,18 @@ exports.checkAuth = async (req, res) => {
     });
   }
 };
+
+exports.logout = async (req, res) => {
+  try {
+    // Since we use JWT without httponly cookies, the server just confirms logout
+    // The client is responsible for clearing the token from localStorage
+    res.status(200).json({
+      message: 'Logout successful'
+    });
+  } catch (error) {
+    res.status(500).json({
+      error: 'Logout failed',
+      details: error.message
+    });
+  }
+};

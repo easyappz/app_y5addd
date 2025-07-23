@@ -45,12 +45,14 @@ instance.interceptors.response.use(
       type: 'fetchError',
       url: error.config?.url,
       request: {
+        headers: error.config.headers,
         data: error.config.data,
       },
       response: {
         status: error.response?.status,
-        message: error.message,
         data: error.response?.data,
+        headers: error.response?.headers,
+        message: error.message,
       },
     };
 

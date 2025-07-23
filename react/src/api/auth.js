@@ -16,6 +16,22 @@ export const checkAuth = async () => {
 };
 
 /**
+ * Login a user with email and password
+ * @param {string} email - The email address of the user
+ * @param {string} password - The password of the user
+ * @returns {Promise<Object>} - Response from the server containing the token
+ */
+export const login = async (email, password) => {
+  try {
+    const response = await instance.post('/api/login', { email, password });
+    return response.data;
+  } catch (error) {
+    console.error('Login failed:', error);
+    throw error.response?.data || error;
+  }
+};
+
+/**
  * Request a password reset for the given email
  * @param {string} email - The email address of the user
  * @returns {Promise<Object>} - Response from the server

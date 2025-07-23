@@ -16,7 +16,10 @@ const UploadPhoto = () => {
     setLoading(true);
     setError(null);
     try {
-      await uploadPhoto(file);
+      // Создаем FormData для отправки файла
+      const formData = new FormData();
+      formData.append('photo', file);
+      await uploadPhoto(formData);
       setSuccess(true);
     } catch (err) {
       setError(err.message || 'Ошибка при загрузке фото');
@@ -36,23 +39,26 @@ const UploadPhoto = () => {
           style={{ marginBottom: 16 }}
         />
       ) : (
-        <Card style={{ textAlign: 'center' }}>
+        <Card style={{ textAlign: 'center', borderRadius: 8, boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)' }}>
           <Upload
             customRequest={handleUpload}
             showUploadList={false}
             accept="image/jpeg,image/png"
             disabled={loading}
           >
-            <Button icon={<UploadOutlined />} loading={loading}>
+            <Button icon={<UploadOutlined />} loading={loading} size="large" style={{ borderRadius: 6 }}>
               Выбрать фото
             </Button>
           </Upload>
-          <p style={{ marginTop: 10 }}>Поддерживаются форматы JPEG и PNG, максимальный размер 5 МБ</p>
+          <p style={{ marginTop: 10, color: '#888', fontSize: '14px' }}>
+            Поддерживаются форматы JPEG и PNG, максимальный размер 5 МБ
+          </p>
         </Card>
       )}
       <Button
         onClick={() => navigate('/')}
-        style={{ marginTop: 20 }}
+        style={{ marginTop: 20, borderRadius: 6 }}
+        size="large"
         block
       >
         Вернуться на главную

@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 
 const { Title } = Typography;
 
-const Login = () => {
+const Login = ({ setIsAuthenticated }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
@@ -16,7 +16,8 @@ const Login = () => {
     try {
       const data = await login(values.email, values.password);
       localStorage.setItem('token', data.token);
-      navigate('/');
+      setIsAuthenticated(true);
+      navigate('/home');
     } catch (err) {
       setError(err.message || 'Ошибка входа');
     } finally {

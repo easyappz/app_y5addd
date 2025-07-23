@@ -229,15 +229,10 @@ exports.getMyPhotos = async (req, res) => {
       isEvaluated: user.evaluatedPhotos.some(id => id.toString() === photo._id.toString())
     }));
 
-    // Calculate total points (sum of ratings for all photos)
-    const totalPoints = photos.reduce((sum, photo) => {
-      const ratings = photo.ratings.map(r => r.score);
-      return sum + (ratings.length ? ratings.reduce((a, b) => a + b, 0) : 0);
-    }, 0);
-
+    // Return user's points from the database
     res.json({
       photos: photosWithStatus,
-      points: user.points // Return user points instead of calculated totalPoints
+      points: user.points
     });
   } catch (error) {
     res.status(500).json({ error: 'Failed to fetch user\'s photos', details: error.message });

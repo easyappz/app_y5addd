@@ -21,5 +21,6 @@ router.post('/photo/rate', authMiddleware, photoController.ratePhoto);
 router.post('/photo/evaluate/add', authMiddleware, photoController.addToEvaluated);
 router.post('/photo/evaluate/remove', authMiddleware, photoController.removeFromEvaluated);
 router.get('/photo/statistics/:photoId', authMiddleware, photoController.getPhotoStatistics);
+router.get('/photo/my-photos', authMiddleware, photoController.getMyPhotos);
 
 module.exports = router;

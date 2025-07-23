@@ -182,3 +182,30 @@ exports.getPhotoStatistics = async (req, res) => {
     res.status(500).json({ error: 'Failed to fetch photo statistics', details: error.message });
   }
 };
+
+exports.getMyPhotos = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const user = await User.findById(userId);
+    const photos = await Photo.find({ userId });
+
+    const photosWithStatus = photos.map(photo => ({
+      id: photo._id,
+      filePath: `/uploads/${path.basename(photo.filePath)}`,
+      isEvaluated: user.evaluatedPhotos.some(id => id.toString() === photo._id.toString())
+    }));
+
+    // Calculate total points (sum of ratings for all photos)
+    const totalPoints = photos.reduce((sum, photo) => {
+      const ratings = photo.ratings.map(r => r.score);
+      return sum + (ratings.length ? ratings.reduce((a, b) => a + b, 0) : 0);
+    }, 0);
+
+    res.json({
+      photos: photosWithStatus,
+      points: totalPoints
+    });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch user\'s photos', details: error.message });
+  }
+};

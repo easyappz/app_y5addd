@@ -2,6 +2,7 @@ const path = require('path');
 const fs = require('fs').promises;
 const Photo = require('@src/models/Photo');
 const User = require('@src/models/User');
+const mongoose = require('mongoose');
 
 exports.uploadPhoto = async (req, res) => {
   try {
@@ -136,9 +137,18 @@ exports.ratePhoto = async (req, res) => {
 exports.addToEvaluated = async (req, res) => {
   try {
     const { photoId } = req.body;
+
+    // Validate if photoId is a valid ObjectId
+    if (!mongoose.Types.ObjectId.isValid(photoId)) {
+      return res.status(400).json({ error: 'Invalid photo ID format' });
+    }
+
     const user = await User.findById(req.user.id);
-    if (!user.evaluatedPhotos.includes(photoId)) {
-      user.evaluatedPhotos.push(photoId);
+    const photoObjectId = new mongoose.Types.ObjectId(photoId);
+
+    // Check if the photoId is already in the evaluatedPhotos array
+    if (!user.evaluatedPhotos.some(id => id.equals(photoObjectId))) {
+      user.evaluatedPhotos.push(photoObjectId);
       await user.save();
     }
     res.json({ message: 'Photo added to evaluated' });
@@ -150,8 +160,15 @@ exports.addToEvaluated = async (req, res) => {
 exports.removeFromEvaluated = async (req, res) => {
   try {
     const { photoId } = req.body;
+
+    // Validate if photoId is a valid ObjectId
+    if (!mongoose.Types.ObjectId.isValid(photoId)) {
+      return res.status(400).json({ error: 'Invalid photo ID format' });
+    }
+
     const user = await User.findById(req.user.id);
-    user.evaluatedPhotos = user.evaluatedPhotos.filter(id => id.toString() !== photoId);
+    const photoObjectId = new mongoose.Types.ObjectId(photoId);
+    user.evaluatedPhotos = user.evaluatedPhotos.filter(id => !id.equals(photoObjectId));
     await user.save();
     res.json({ message: 'Photo removed from evaluated' });
   } catch (error) {

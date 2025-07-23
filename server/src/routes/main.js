@@ -11,6 +11,7 @@ router.post('/register', authController.register);
 router.post('/login', authController.login);
 router.post('/forgot-password', authController.forgotPassword);
 router.post('/reset-password', authController.resetPassword);
+router.get('/auth/check', authMiddleware, authController.checkAuth);
 
 // Photo routes
 router.post('/photo/upload', authMiddleware, upload.single('photo'), photoController.uploadPhoto);

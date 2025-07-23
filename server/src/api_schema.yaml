@@ -122,6 +122,49 @@ paths:
           description: Invalid or expired token
         '500':
           description: Reset password failed
+  /api/auth/check:
+    get:
+      summary: Check user authentication status
+      parameters:
+        - in: header
+          name: Authorization
+          required: true
+          schema:
+            type: string
+            example: Bearer <token>
+          description: JWT token for authentication
+      responses:
+        '200':
+          description: User is authenticated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  isAuthenticated:
+                    type: boolean
+                  user:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                      email:
+                        type: string
+        '401':
+          description: Unauthorized - Invalid or missing token
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  isAuthenticated:
+                    type: boolean
+                  error:
+                    type: string
+                  details:
+                    type: string
+        '500':
+          description: Authentication check failed
   /api/photo/upload:
     post:
       summary: Upload a photo (requires authentication)

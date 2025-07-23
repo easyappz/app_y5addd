@@ -82,3 +82,20 @@ exports.resetPassword = async (req, res) => {
     res.status(500).json({ error: 'Reset password failed', details: error.message });
   }
 };
+
+exports.checkAuth = async (req, res) => {
+  try {
+    // User data is already attached to req.user by authMiddleware
+    const { id, email } = req.user;
+    res.status(200).json({
+      isAuthenticated: true,
+      user: { id, email }
+    });
+  } catch (error) {
+    res.status(401).json({
+      isAuthenticated: false,
+      error: 'Authentication check failed',
+      details: error.message
+    });
+  }
+};

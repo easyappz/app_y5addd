@@ -6,12 +6,20 @@ import { instance } from './axios';
  * @returns {Promise<Object>} - Response with message and photoId
  */
 export const uploadPhoto = async (formData) => {
-  const response = await instance.post('/api/photo/upload', formData, {
-    headers: {
-      'Content-Type': 'multipart/form-data',
-    },
-  });
-  return response.data;
+  try {
+    const response = await instance.post('/api/photo/upload', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+    return response.data;
+  } catch (error) {
+    throw {
+      status: error.response?.status || 500,
+      message: error.response?.data?.error || 'Ошибка при загрузке фотографии',
+      details: error.response?.data?.details || 'Неизвестная ошибка сервера',
+    };
+  }
 };
 
 /**

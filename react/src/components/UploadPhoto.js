@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { Upload, Button, message, Card, List, Switch } from 'antd';
-import { UploadOutlined } from '@ant-design/icons';
+import { Upload, Button, message, Card, List, Switch, Modal } from 'antd';
+import { UploadOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
 import { uploadPhoto, addPhotoToEvaluated, removePhotoFromEvaluated } from '../api/photo';
 
 const { Dragger } = Upload;
@@ -19,7 +19,29 @@ const UploadPhoto = ({ userPhotos, setUserPhotos, userPoints }) => {
       message.success('Фотография успешно загружена');
     } catch (error) {
       onError(error);
-      message.error('Ошибка при загрузке фотографии');
+      let errorMessage = 'Ошибка при загрузке фотографии';
+      let errorDetails = 'Произошла неизвестная ошибка. Пожалуйста, попробуйте снова.';
+
+      if (error.status === 400) {
+        errorMessage = 'Неверный формат или размер файла';
+        errorDetails = error.details || 'Проверьте, что вы загружаете изображение в формате JPEG или PNG и размер файла не превышает допустимый лимит.';
+      } else if (error.status === 401) {
+        errorMessage = 'Не авторизован';
+        errorDetails = error.details || 'Пожалуйста, войдите в систему, чтобы загружать фотографии.';
+      } else if (error.status === 500) {
+        errorMessage = 'Ошибка сервера';
+        errorDetails = error.details || 'Произошла ошибка на сервере. Пожалуйста, попробуйте позже.';
+      }
+
+      Modal.error({
+        title: errorMessage,
+        content: errorDetails,
+        icon: <ExclamationCircleOutlined />,
+        okText: 'Понятно',
+        centered: true,
+        width: 500,
+        style: { borderRadius: '8px' },
+      });
     } finally {
       setLoading(false);
     }
@@ -32,9 +54,9 @@ const UploadPhoto = ({ userPhotos, setUserPhotos, userPoints }) => {
     }
     try {
       if (checked) {
-        await addPhotoToEvaluated(photoId);
+        await addPhotoToEvaluated({ photoId });
       } else {
-        await removePhotoFromEvaluated(photoId);
+        await removePhotoFromEvaluated({ photoId });
       }
       setUserPhotos(userPhotos.map(photo => 
         photo.id === photoId ? { ...photo, evaluated: checked } : photo

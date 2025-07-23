@@ -17,13 +17,6 @@ paths:
                   type: string
                 password:
                   type: string
-                name:
-                  type: string
-                gender:
-                  type: string
-                  enum: [male, female, other]
-                age:
-                  type: number
       responses:
         '201':
           description: User registered successfully
@@ -34,26 +27,13 @@ paths:
                 properties:
                   token:
                     type: string
-                  user:
-                    type: object
-                    properties:
-                      id:
-                        type: string
-                      email:
-                        type: string
-                      name:
-                        type: string
-                      gender:
-                        type: string
-                      age:
-                        type: number
-                      points:
-                        type: number
         '400':
           description: Email already registered
+        '500':
+          description: Registration failed
   /api/login:
     post:
-      summary: Login user
+      summary: Login a user
       requestBody:
         required: true
         content:
@@ -75,23 +55,10 @@ paths:
                 properties:
                   token:
                     type: string
-                  user:
-                    type: object
-                    properties:
-                      id:
-                        type: string
-                      email:
-                        type: string
-                      name:
-                        type: string
-                      gender:
-                        type: string
-                      age:
-                        type: number
-                      points:
-                        type: number
         '400':
           description: Invalid credentials
+        '500':
+          description: Login failed
   /api/forgot-password:
     post:
       summary: Request password reset
@@ -107,11 +74,22 @@ paths:
       responses:
         '200':
           description: Password reset token generated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  token:
+                    type: string
         '404':
           description: User not found
+        '500':
+          description: Forgot password failed
   /api/reset-password:
     post:
-      summary: Reset password
+      summary: Reset user password
       requestBody:
         required: true
         content:
@@ -128,9 +106,11 @@ paths:
           description: Password reset successful
         '400':
           description: Invalid or expired token
+        '500':
+          description: Reset password failed
   /api/photo/upload:
     post:
-      summary: Upload a photo
+      summary: Upload a photo (requires authentication)
       requestBody:
         required: true
         content:
@@ -141,11 +121,6 @@ paths:
                 photo:
                   type: string
                   format: binary
-                gender:
-                  type: string
-                  enum: [male, female, other]
-                age:
-                  type: number
       responses:
         '201':
           description: Photo uploaded successfully
@@ -154,29 +129,19 @@ paths:
               schema:
                 type: object
                 properties:
-                  photo:
-                    type: object
-                  points:
-                    type: number
-        '403':
-          description: Not enough points to upload photo
+                  message:
+                    type: string
+                  photoId:
+                    type: string
+        '400':
+          description: Invalid file type or size
+        '401':
+          description: Unauthorized
+        '500':
+          description: Photo upload failed
   /api/photo/rate:
     get:
-      summary: Get photos to rate
-      parameters:
-        - in: query
-          name: gender
-          schema:
-            type: string
-            enum: [male, female, other]
-        - in: query
-          name: ageMin
-          schema:
-            type: number
-        - in: query
-          name: ageMax
-          schema:
-            type: number
+      summary: Get photos to rate (requires authentication)
       responses:
         '200':
           description: List of photos to rate
@@ -186,8 +151,17 @@ paths:
                 type: array
                 items:
                   type: object
+                  properties:
+                    id:
+                      type: string
+                    filePath:
+                      type: string
+        '401':
+          description: Unauthorized
+        '500':
+          description: Failed to fetch photos
     post:
-      summary: Rate a photo
+      summary: Rate a photo (requires authentication)
       requestBody:
         required: true
         content:
@@ -199,27 +173,22 @@ paths:
                   type: string
                 score:
                   type: number
+                  minimum: 1
+                  maximum: 5
       responses:
         '200':
           description: Photo rated successfully
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                  raterPoints:
-                    type: number
-                  ownerPoints:
-                    type: number
-        '403':
-          description: Cannot rate own photo
+        '400':
+          description: Invalid score or already rated
+        '401':
+          description: Unauthorized
         '404':
           description: Photo not found
+        '500':
+          description: Rating failed
   /api/photo/evaluate/add:
     post:
-      summary: Add photo to evaluated list
+      summary: Add photo to evaluated list (requires authentication)
       requestBody:
         required: true
         content:
@@ -231,23 +200,14 @@ paths:
                   type: string
       responses:
         '200':
-          description: Photo added to evaluated list
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                  points:
-                    type: number
-        '403':
-          description: Not enough points
-        '404':
-          description: Photo not found
+          description: Photo added to evaluated
+        '401':
+          description: Unauthorized
+        '500':
+          description: Failed to add photo
   /api/photo/evaluate/remove:
     post:
-      summary: Remove photo from evaluated list
+      summary: Remove photo from evaluated list (requires authentication)
       requestBody:
         required: true
         content:
@@ -259,12 +219,14 @@ paths:
                   type: string
       responses:
         '200':
-          description: Photo removed from evaluated list
-        '404':
-          description: Photo not found
+          description: Photo removed from evaluated
+        '401':
+          description: Unauthorized
+        '500':
+          description: Failed to remove photo
   /api/photo/statistics/{photoId}:
     get:
-      summary: Get photo statistics
+      summary: Get photo statistics (requires authentication)
       parameters:
         - in: path
           name: photoId
@@ -278,5 +240,20 @@ paths:
             application/json:
               schema:
                 type: object
+                properties:
+                  totalRatings:
+                    type: number
+                  averageScore:
+                    type: string
+                  scores:
+                    type: array
+                    items:
+                      type: number
+        '401':
+          description: Unauthorized
+        '403':
+          description: Access forbidden
         '404':
           description: Photo not found
+        '500':
+          description: Failed to fetch statistics

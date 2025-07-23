@@ -2,8 +2,7 @@ const express = require('express');
 const authController = require('@src/controllers/authController');
 const photoController = require('@src/controllers/photoController');
 const authMiddleware = require('@src/middleware/auth');
-const multer = require('multer');
-const upload = multer({ dest: 'uploads/' });
+const upload = require('@src/middleware/multerConfig');
 
 const router = express.Router();
 

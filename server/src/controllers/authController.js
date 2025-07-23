@@ -15,7 +15,7 @@ exports.register = async (req, res) => {
     await user.save();
 
     const token = jwt.sign({ id: user._id, email }, 'mysecretkey', { expiresIn: '1h' });
-    res.status(201).json({ token });
+    res.status(201).json({ token, user: { id: user._id, email: user.email } });
   } catch (error) {
     res.status(500).json({ error: 'Registration failed', details: error.message });
   }
@@ -35,7 +35,7 @@ exports.login = async (req, res) => {
     }
 
     const token = jwt.sign({ id: user._id, email }, 'mysecretkey', { expiresIn: '1h' });
-    res.json({ token });
+    res.json({ token, user: { id: user._id, email: user.email } });
   } catch (error) {
     res.status(500).json({ error: 'Login failed', details: error.message });
   }

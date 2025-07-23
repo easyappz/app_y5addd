@@ -27,6 +27,13 @@ paths:
                 properties:
                   token:
                     type: string
+                  user:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                      email:
+                        type: string
         '400':
           description: Email already registered
         '500':
@@ -55,6 +62,13 @@ paths:
                 properties:
                   token:
                     type: string
+                  user:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                      email:
+                        type: string
         '400':
           description: Invalid credentials
         '500':

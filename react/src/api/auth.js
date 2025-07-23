@@ -76,3 +76,19 @@ export const resetPassword = async (token, newPassword) => {
     throw error.response?.data || error;
   }
 };
+
+/**
+ * Logout the current user
+ * @returns {Promise<Object>} - Response from the server
+ */
+export const logout = async () => {
+  try {
+    const response = await instance.post('/api/logout');
+    localStorage.removeItem('token');
+    return response.data;
+  } catch (error) {
+    console.error('Logout failed:', error);
+    localStorage.removeItem('token');
+    throw error.response?.data || error;
+  }
+};

@@ -8,6 +8,7 @@ import ResetPassword from './components/Auth/ResetPassword';
 import MyPhotos from './components/MyPhotos';
 import Upload from './components/Upload';
 import RatePhoto from './components/RatePhoto';
+import Navigation from './components/Navigation';
 import { checkAuth } from './api/auth';
 import './App.css';
 
@@ -43,6 +44,7 @@ function App() {
   return (
     <Router>
       <div className="App">
+        <Navigation isAuthenticated={isAuthenticated} setIsAuthenticated={setIsAuthenticated} />
         <Routes>
           {/* Public routes for unauthenticated users */}
           <Route path="/login" element={!isAuthenticated ? <Login setIsAuthenticated={setIsAuthenticated} /> : <Navigate to="/home" />} />

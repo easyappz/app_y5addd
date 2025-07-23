@@ -19,7 +19,7 @@ const RatePhoto = () => {
   const fetchPhotos = async () => {
     setLoading(true);
     try {
-      const data = await getPhotosToRate();
+      const data = await getPhotosToRate({ gender: genderFilter, age: ageFilter });
       setPhotos(data);
       if (data.length > 0) {
         setCurrentPhoto(data[0]);

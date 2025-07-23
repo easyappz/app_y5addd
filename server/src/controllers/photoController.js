@@ -73,10 +73,26 @@ exports.uploadPhoto = async (req, res) => {
 exports.getPhotosToRate = async (req, res) => {
   try {
     const user = await User.findById(req.user.id);
-    const photos = await Photo.find({
+    const { gender, age } = req.query;
+    
+    // Build query based on filters
+    let query = {
       userId: { $ne: req.user.id },
       _id: { $nin: user.evaluatedPhotos }
-    }).limit(10);
+    };
+
+    // Add gender filter if provided
+    if (gender && gender !== 'all') {
+      query['userGender'] = gender;
+    }
+
+    // Add age filter if provided
+    if (age && age !== 'all') {
+      const [minAge, maxAge] = age.split('-').map(Number);
+      query['userAge'] = { $gte: minAge, $lte: maxAge };
+    }
+
+    const photos = await Photo.find(query).limit(10);
 
     res.json(photos.map(photo => ({
       id: photo._id,

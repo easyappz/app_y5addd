@@ -24,44 +24,49 @@ export const uploadPhoto = async (formData) => {
 
 /**
  * Get photos to rate
+ * @param {Object} filters - Filters for photos
+ * @param {string} filters.gender - Gender filter (all, male, female)
+ * @param {string} filters.age - Age range filter (all, 18-25, 26-35, 36-50, 50+)
  * @returns {Promise<Array<Object>>} - List of photos to rate
  */
-export const getPhotosToRate = async () => {
-  const response = await instance.get('/api/photo/rate');
+export const getPhotosToRate = async (filters = { gender: 'all', age: 'all' }) => {
+  const response = await instance.get('/api/photo/rate', {
+    params: {
+      gender: filters.gender,
+      age: filters.age
+    }
+  });
   return response.data;
 };
 
 /**
  * Rate a photo
- * @param {Object} data - Rating data
- * @param {string} data.photoId - Photo ID
- * @param {number} data.score - Rating score (1-5)
+ * @param {string} photoId - Photo ID
+ * @param {number} score - Rating score (1-5)
  * @returns {Promise<Object>} - Response with success message
  */
-export const ratePhoto = async (data) => {
-  const response = await instance.post('/api/photo/rate', data);
+export const ratePhoto = async (photoId, score) => {
+  const response = await instance.post('/api/photo/rate', { photoId, score });
   return response.data;
 };
 
 /**
  * Add photo to evaluated list
- * @param {Object} data - Photo data
- * @param {string} data.photoId - Photo ID
+ * @param {string} photoId - Photo ID
  * @returns {Promise<Object>} - Response with success message
  */
-export const addPhotoToEvaluated = async (data) => {
-  const response = await instance.post('/api/photo/evaluate/add', data);
+export const addPhotoToEvaluated = async (photoId) => {
+  const response = await instance.post('/api/photo/evaluate/add', { photoId });
   return response.data;
 };
 
 /**
  * Remove photo from evaluated list
- * @param {Object} data - Photo data
- * @param {string} data.photoId - Photo ID
+ * @param {string} photoId - Photo ID
  * @returns {Promise<Object>} - Response with success message
  */
-export const removePhotoFromEvaluated = async (data) => {
-  const response = await instance.post('/api/photo/evaluate/remove', data);
+export const removePhotoFromEvaluated = async (photoId) => {
+  const response = await instance.post('/api/photo/evaluate/remove', { photoId });
   return response.data;
 };
 

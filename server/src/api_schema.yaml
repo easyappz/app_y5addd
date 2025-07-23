@@ -222,6 +222,19 @@ paths:
   /api/photo/rate:
     get:
       summary: Get photos to rate (requires authentication)
+      parameters:
+        - in: query
+          name: gender
+          schema:
+            type: string
+            enum: [all, male, female]
+          description: Filter by gender
+        - in: query
+          name: age
+          schema:
+            type: string
+            enum: [all, 18-25, 26-35, 36-50, 50+]
+          description: Filter by age range
       responses:
         '200':
           description: List of photos to rate

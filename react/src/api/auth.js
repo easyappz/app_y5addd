@@ -6,9 +6,8 @@ import { instance } from './axios';
  */
 export const checkAuth = async () => {
   try {
-    // Assuming there is an endpoint to validate the token
     const response = await instance.get('/api/auth/check');
-    return response.data.isAuthenticated || false;
+    return response.status === 200 && response.data.isAuthenticated === true;
   } catch (error) {
     console.error('Authentication check failed:', error);
     return false;

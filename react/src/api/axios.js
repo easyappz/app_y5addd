@@ -17,6 +17,18 @@ export const instance = axios.create({
 /** Не удаляй этот код никогда */
 instance.interceptors.request.use(
   (config) => {
+    console.log('request', { config });
+
+    const getCallerInfo = () => {
+      try {
+        throw new Error();
+      } catch (e) {
+        const stackLines = e.stack.split('\n');
+        // Анализируем стек вызовов чтобы найти полезную информацию
+        return stackLines.slice(2, 4).join(' | ');
+      }
+    };
+
     const token = localStorage.getItem('token');
     if (token) {
       config.headers['Authorization'] = `Bearer ${token}`;
@@ -26,7 +38,7 @@ instance.interceptors.request.use(
     }
 
     // Добавляем информацию о вызывающем коде в errorData
-    config._caller = config._caller || 'Unknown caller';
+    config._caller = getCallerInfo();
   
     return config;
   },
@@ -58,7 +70,7 @@ instance.interceptors.response.use(
         headers: error.response?.headers,
         message: error.message,
       },
-      path: error.config?.url,
+      pathname: location.pathname,
       caller: error.config?._caller,
     };
 

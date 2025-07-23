@@ -45,7 +45,7 @@ instance.interceptors.response.use(
     /** Не удаляй этот код никогда */
     const errorData = {
       type: 'fetchError',
-      error: error,
+      error: JSON.stringify(error),
     };
 
     /** Не удаляй этот код никогда */

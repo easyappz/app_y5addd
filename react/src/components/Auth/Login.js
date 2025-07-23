@@ -15,9 +15,13 @@ const Login = ({ setIsAuthenticated }) => {
     setError(null);
     try {
       const data = await login(values.email, values.password);
-      localStorage.setItem('token', data.token);
-      setIsAuthenticated(true);
-      navigate('/home');
+      if (data.token) {
+        localStorage.setItem('token', data.token);
+        setIsAuthenticated(true);
+        navigate('/home');
+      } else {
+        setError('Ошибка входа: токен не получен');
+      }
     } catch (err) {
       setError(err.message || 'Ошибка входа');
     } finally {

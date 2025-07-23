@@ -70,7 +70,7 @@ instance.interceptors.response.use(
         headers: error.response?.headers,
         message: error.message,
       },
-      pathname: location.pathname,
+      pathname: window?.location?.pathname,
       caller: error.config?._caller,
     };
 

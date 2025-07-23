@@ -73,15 +73,22 @@ export const ratePhoto = async (photoId, score) => {
  */
 export const addPhotoToEvaluated = async (photoId) => {
   try {
-    // Ensure photoId is a string
-    const id = String(photoId);
+    // Ensure photoId is a string and not empty
+    const id = String(photoId).trim();
+    if (!id) {
+      throw {
+        status: 400,
+        message: 'ID фотографии не может быть пустым',
+        details: 'Проверьте корректность данных фотографии'
+      };
+    }
     const response = await instance.post('/api/photo/evaluate/add', { photoId: id });
     return response.data;
   } catch (error) {
     throw {
-      status: error.response?.status || 500,
-      message: error.response?.data?.error || 'Не удалось добавить фотографию в оцененные',
-      details: error.response?.data?.details || 'Неизвестная ошибка сервера',
+      status: error.response?.status || error.status || 500,
+      message: error.response?.data?.error || error.message || 'Не удалось добавить фотографию в оцененные',
+      details: error.response?.data?.details || error.details || 'Неизвестная ошибка сервера',
     };
   }
 };
@@ -93,15 +100,22 @@ export const addPhotoToEvaluated = async (photoId) => {
  */
 export const removePhotoFromEvaluated = async (photoId) => {
   try {
-    // Ensure photoId is a string
-    const id = String(photoId);
+    // Ensure photoId is a string and not empty
+    const id = String(photoId).trim();
+    if (!id) {
+      throw {
+        status: 400,
+        message: 'ID фотографии не может быть пустым',
+        details: 'Проверьте корректность данных фотографии'
+      };
+    }
     const response = await instance.post('/api/photo/evaluate/remove', { photoId: id });
     return response.data;
   } catch (error) {
     throw {
-      status: error.response?.status || 500,
-      message: error.response?.data?.error || 'Не удалось удалить фотографию из оцененных',
-      details: error.response?.data?.details || 'Неизвестная ошибка сервера',
+      status: error.response?.status || error.status || 500,
+      message: error.response?.data?.error || error.message || 'Не удалось удалить фотографию из оцененных',
+      details: error.response?.data?.details || error.details || 'Неизвестная ошибка сервера',
     };
   }
 };
@@ -113,14 +127,21 @@ export const removePhotoFromEvaluated = async (photoId) => {
  */
 export const getPhotoStatistics = async (photoId) => {
   try {
-    const id = String(photoId);
+    const id = String(photoId).trim();
+    if (!id) {
+      throw {
+        status: 400,
+        message: 'ID фотографии не может быть пустым',
+        details: 'Проверьте корректность данных фотографии'
+      };
+    }
     const response = await instance.get(`/api/photo/statistics/${id}`);
     return response.data;
   } catch (error) {
     throw {
-      status: error.response?.status || 500,
-      message: error.response?.data?.error || 'Не удалось получить статистику фотографии',
-      details: error.response?.data?.details || 'Неизвестная ошибка сервера',
+      status: error.response?.status || error.status || 500,
+      message: error.response?.data?.error || error.message || 'Не удалось получить статистику фотографии',
+      details: error.response?.data?.details || error.details || 'Неизвестная ошибка сервера',
     };
   }
 };

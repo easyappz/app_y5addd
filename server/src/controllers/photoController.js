@@ -1,5 +1,5 @@
 const path = require('path');
-const fs = require('fs');
+const fs = require('fs').promises;
 const Photo = require('@src/models/Photo');
 const User = require('@src/models/User');
 
@@ -11,17 +11,41 @@ exports.uploadPhoto = async (req, res) => {
 
     const allowedTypes = ['image/jpeg', 'image/png'];
     if (!allowedTypes.includes(req.file.mimetype)) {
-      if (fs.existsSync(req.file.path)) {
-        fs.unlinkSync(req.file.path);
+      try {
+        await fs.unlink(req.file.path);
+      } catch (unlinkError) {
+        console.error('Failed to delete invalid file type:', unlinkError.message);
       }
       return res.status(400).json({ error: 'Only JPEG and PNG files are allowed' });
     }
 
     if (req.file.size > 5 * 1024 * 1024) { // 5MB limit
-      if (fs.existsSync(req.file.path)) {
-        fs.unlinkSync(req.file.path);
+      try {
+        await fs.unlink(req.file.path);
+      } catch (unlinkError) {
+        console.error('Failed to delete oversized file:', unlinkError.message);
       }
       return res.status(400).json({ error: 'File size exceeds 5MB limit' });
+    }
+
+    // Check if the uploads directory is accessible
+    const uploadDir = path.dirname(req.file.path);
+    try {
+      await fs.access(uploadDir);
+    } catch (dirError) {
+      try {
+        await fs.unlink(req.file.path);
+      } catch (unlinkError) {
+        console.error('Failed to delete file due to directory access issue:', unlinkError.message);
+      }
+      return res.status(500).json({ error: 'Server error: Unable to access upload directory', details: dirError.message });
+    }
+
+    // Check if the file exists after upload
+    try {
+      await fs.access(req.file.path);
+    } catch (fileError) {
+      return res.status(500).json({ error: 'Server error: Uploaded file not found on server', details: fileError.message });
     }
 
     const photo = new Photo({
@@ -35,8 +59,12 @@ exports.uploadPhoto = async (req, res) => {
     await photo.save();
     res.status(201).json({ message: 'Photo uploaded successfully', photoId: photo._id });
   } catch (error) {
-    if (req.file && fs.existsSync(req.file.path)) {
-      fs.unlinkSync(req.file.path);
+    if (req.file) {
+      try {
+        await fs.unlink(req.file.path);
+      } catch (unlinkError) {
+        console.error('Failed to delete file on error:', unlinkError.message);
+      }
     }
     res.status(500).json({ error: 'Photo upload failed', details: error.message });
   }

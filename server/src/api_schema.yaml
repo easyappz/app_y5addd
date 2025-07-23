@@ -336,7 +336,7 @@ paths:
                   points:
                     type: number
         '400':
-          description: Invalid photo ID format or type
+          description: Invalid photoId type or format
           content:
             application/json:
               schema:

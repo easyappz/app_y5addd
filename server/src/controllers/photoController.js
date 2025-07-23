@@ -143,6 +143,11 @@ exports.addToEvaluated = async (req, res) => {
       return res.status(400).json({ error: 'Photo ID is required and must be a string' });
     }
 
+    // Specific check for '[object Object]'
+    if (photoId === '[object Object]') {
+      return res.status(400).json({ error: 'Invalid photoId: appears to be an object, please provide a string ID' });
+    }
+
     // Validate if photoId is a valid ObjectId
     if (!mongoose.Types.ObjectId.isValid(photoId)) {
       return res.status(400).json({ error: 'Invalid photo ID format' });

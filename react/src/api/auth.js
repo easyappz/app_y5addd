@@ -32,6 +32,22 @@ export const login = async (email, password) => {
 };
 
 /**
+ * Register a new user with email and password
+ * @param {string} email - The email address of the user
+ * @param {string} password - The password of the user
+ * @returns {Promise<Object>} - Response from the server containing the token
+ */
+export const register = async (email, password) => {
+  try {
+    const response = await instance.post('/api/register', { email, password });
+    return response.data;
+  } catch (error) {
+    console.error('Registration failed:', error);
+    throw error.response?.data || error;
+  }
+};
+
+/**
  * Request a password reset for the given email
  * @param {string} email - The email address of the user
  * @returns {Promise<Object>} - Response from the server

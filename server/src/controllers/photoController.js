@@ -143,6 +143,12 @@ exports.addToEvaluated = async (req, res) => {
       return res.status(400).json({ error: 'Invalid photo ID format' });
     }
 
+    // Check if the photo exists
+    const photo = await Photo.findById(photoId);
+    if (!photo) {
+      return res.status(404).json({ error: 'Photo not found' });
+    }
+
     const user = await User.findById(req.user.id);
     const photoObjectId = new mongoose.Types.ObjectId(photoId);
 

@@ -27,7 +27,23 @@ const RatePhoto = () => {
         setCurrentPhoto(null);
       }
     } catch (error) {
-      message.error('Ошибка при загрузке фотографий для оценки');
+      let errorMessage = 'Ошибка при загрузке фотографий для оценки';
+      if (error.status === 401) {
+        errorMessage = 'Вы не авторизованы. Пожалуйста, войдите в систему.';
+      } else if (error.status === 500) {
+        errorMessage = 'Серверная ошибка. Попробуйте позже.';
+      } else if (error.message) {
+        errorMessage = error.message;
+      }
+      message.error({
+        content: errorMessage,
+        style: {
+          marginTop: '20px',
+          fontSize: '16px',
+          textAlign: 'center',
+        },
+        duration: 3,
+      });
     } finally {
       setLoading(false);
     }
@@ -35,13 +51,29 @@ const RatePhoto = () => {
 
   const handleRate = async () => {
     if (!currentPhoto || rating === 0) {
-      message.error('Пожалуйста, выберите оценку');
+      message.error({
+        content: 'Пожалуйста, выберите оценку',
+        style: {
+          marginTop: '20px',
+          fontSize: '16px',
+          textAlign: 'center',
+        },
+        duration: 2,
+      });
       return;
     }
     setLoading(true);
     try {
       await ratePhoto(currentPhoto.id, rating);
-      message.success('Оценка сохранена');
+      message.success({
+        content: 'Оценка сохранена',
+        style: {
+          marginTop: '20px',
+          fontSize: '16px',
+          textAlign: 'center',
+        },
+        duration: 2,
+      });
       const updatedPhotos = photos.filter(photo => photo.id !== currentPhoto.id);
       setPhotos(updatedPhotos);
       setRating(0);
@@ -49,10 +81,38 @@ const RatePhoto = () => {
         setCurrentPhoto(updatedPhotos[0]);
       } else {
         setCurrentPhoto(null);
-        message.info('Фотографии для оценки закончились');
+        message.info({
+          content: 'Фотографии для оценки закончились',
+          style: {
+            marginTop: '20px',
+            fontSize: '16px',
+            textAlign: 'center',
+          },
+          duration: 3,
+        });
       }
     } catch (error) {
-      message.error('Ошибка при сохранении оценки');
+      let errorMessage = 'Ошибка при сохранении оценки';
+      if (error.status === 401) {
+        errorMessage = 'Вы не авторизованы. Пожалуйста, войдите в систему.';
+      } else if (error.status === 400) {
+        errorMessage = 'Недопустимая оценка или фотография уже оценена.';
+      } else if (error.status === 404) {
+        errorMessage = 'Фотография не найдена.';
+      } else if (error.status === 500) {
+        errorMessage = 'Серверная ошибка. Попробуйте позже.';
+      } else if (error.message) {
+        errorMessage = error.message;
+      }
+      message.error({
+        content: errorMessage,
+        style: {
+          marginTop: '20px',
+          fontSize: '16px',
+          textAlign: 'center',
+        },
+        duration: 3,
+      });
     } finally {
       setLoading(false);
     }

@@ -30,13 +30,21 @@ export const uploadPhoto = async (formData) => {
  * @returns {Promise<Array<Object>>} - List of photos to rate
  */
 export const getPhotosToRate = async (filters = { gender: 'all', age: 'all' }) => {
-  const response = await instance.get('/api/photo/rate', {
-    params: {
-      gender: filters.gender,
-      age: filters.age
-    }
-  });
-  return response.data;
+  try {
+    const response = await instance.get('/api/photo/rate', {
+      params: {
+        gender: filters.gender,
+        age: filters.age
+      }
+    });
+    return response.data;
+  } catch (error) {
+    throw {
+      status: error.response?.status || 500,
+      message: error.response?.data?.error || 'Не удалось загрузить фотографии для оценки',
+      details: error.response?.data?.details || 'Неизвестная ошибка сервера',
+    };
+  }
 };
 
 /**
@@ -46,8 +54,16 @@ export const getPhotosToRate = async (filters = { gender: 'all', age: 'all' }) =
  * @returns {Promise<Object>} - Response with success message
  */
 export const ratePhoto = async (photoId, score) => {
-  const response = await instance.post('/api/photo/rate', { photoId, score });
-  return response.data;
+  try {
+    const response = await instance.post('/api/photo/rate', { photoId, score });
+    return response.data;
+  } catch (error) {
+    throw {
+      status: error.response?.status || 500,
+      message: error.response?.data?.error || 'Не удалось сохранить оценку',
+      details: error.response?.data?.details || 'Неизвестная ошибка сервера',
+    };
+  }
 };
 
 /**
@@ -56,8 +72,16 @@ export const ratePhoto = async (photoId, score) => {
  * @returns {Promise<Object>} - Response with success message
  */
 export const addPhotoToEvaluated = async (photoId) => {
-  const response = await instance.post('/api/photo/evaluate/add', { photoId });
-  return response.data;
+  try {
+    const response = await instance.post('/api/photo/evaluate/add', { photoId });
+    return response.data;
+  } catch (error) {
+    throw {
+      status: error.response?.status || 500,
+      message: error.response?.data?.error || 'Не удалось добавить фотографию в оцененные',
+      details: error.response?.data?.details || 'Неизвестная ошибка сервера',
+    };
+  }
 };
 
 /**
@@ -66,8 +90,16 @@ export const addPhotoToEvaluated = async (photoId) => {
  * @returns {Promise<Object>} - Response with success message
  */
 export const removePhotoFromEvaluated = async (photoId) => {
-  const response = await instance.post('/api/photo/evaluate/remove', { photoId });
-  return response.data;
+  try {
+    const response = await instance.post('/api/photo/evaluate/remove', { photoId });
+    return response.data;
+  } catch (error) {
+    throw {
+      status: error.response?.status || 500,
+      message: error.response?.data?.error || 'Не удалось удалить фотографию из оцененных',
+      details: error.response?.data?.details || 'Неизвестная ошибка сервера',
+    };
+  }
 };
 
 /**
@@ -76,6 +108,14 @@ export const removePhotoFromEvaluated = async (photoId) => {
  * @returns {Promise<Object>} - Response with photo statistics
  */
 export const getPhotoStatistics = async (photoId) => {
-  const response = await instance.get(`/api/photo/statistics/${photoId}`);
-  return response.data;
+  try {
+    const response = await instance.get(`/api/photo/statistics/${photoId}`);
+    return response.data;
+  } catch (error) {
+    throw {
+      status: error.response?.status || 500,
+      message: error.response?.data?.error || 'Не удалось получить статистику фотографии',
+      details: error.response?.data?.details || 'Неизвестная ошибка сервера',
+    };
+  }
 };

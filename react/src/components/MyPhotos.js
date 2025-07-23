@@ -74,7 +74,16 @@ const MyPhotos = () => {
 
   const getFullImageUrl = (filePath) => {
     // Проверяем, начинается ли путь с '/uploads/'. Если да, добавляем базовый URL сервера
+    if (!filePath) {
+      return '';
+    }
     return filePath.startsWith('/uploads/') ? `${window.location.origin}${filePath}` : filePath;
+  };
+
+  const handleImageError = (e) => {
+    console.error('Image load error:', e);
+    e.target.src = 'data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs='; // Прозрачное изображение как заглушка
+    e.target.alt = 'Изображение не загружено';
   };
 
   return (
@@ -100,7 +109,14 @@ const MyPhotos = () => {
               key={photo.id}
               hoverable
               style={{ width: 240, borderRadius: 8, boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)' }}
-              cover={<img alt="Мое фото" src={getFullImageUrl(photo.filePath)} style={{ height: 200, objectFit: 'cover', borderRadius: '8px 8px 0 0' }} onError={(e) => console.error('Image load error:', e)} />}
+              cover={
+                <img 
+                  alt="Мое фото" 
+                  src={getFullImageUrl(photo.filePath)} 
+                  style={{ height: 200, objectFit: 'cover', borderRadius: '8px 8px 0 0' }} 
+                  onError={handleImageError} 
+                />
+              }
               actions={[
                 <Button
                   key="evaluate"
